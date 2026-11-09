@@ -22,6 +22,12 @@
   - Impersonated brand detection with official domain and visual spoof similarity.
   - Infrastructure telemetry (domain age, TLS certificate lineage, ASN, country).
   - Expandable forensic evidence drawers for all risk indicators.
+- **D3.js Threat Level Timeline Graph**:
+  - Temporal visualization of threat scores across historical scans using smooth Monotone cubic splines.
+  - Interactive nodes with neon glow effects, critical (85%) and suspicious (50%) threshold guidelines.
+  - Floating forensic tooltip with target URL, timestamp, classification, and impersonated brand.
+  - 1-click node inspection syncing directly with the main verdict inspector.
+  - Telemetry KPI strip tracking Peak Threat Index, Mean Risk Level, and Interception Rate.
 - **Developer Tools**:
   - Formatted JSON response viewer with one-click copy and file download.
   - Searchable, filterable scan logs table with CSV export.
