@@ -5,6 +5,7 @@ import { ScanningState } from './components/ScanningState';
 import { VerdictCard } from './components/VerdictCard';
 import { IntelligenceMetrics } from './components/IntelligenceMetrics';
 import { ScanLogsTable } from './components/ScanLogsTable';
+import { ThreatTimelineChart } from './components/ThreatTimelineChart';
 import { DocsModal } from './components/DocsModal';
 import { SettingsModal } from './components/SettingsModal';
 import { INITIAL_MOCK_SCANS, analyzeTargetUrl } from './data/mockScans';
@@ -118,8 +119,17 @@ export default function App() {
               </section>
             )}
 
+            {/* THREAT TIMELINE D3 LINE GRAPH */}
+            <section className="mt-12">
+              <ThreatTimelineChart
+                scans={scanLogs}
+                onSelectScan={handleSelectFromHistory}
+                selectedScanId={activeScan?.id || null}
+              />
+            </section>
+
             {/* RECENT SCAN LOGS TABLE */}
-            <section className="mt-14">
+            <section className="mt-8">
               <ScanLogsTable
                 logs={scanLogs}
                 onSelectScan={handleSelectFromHistory}
@@ -130,14 +140,19 @@ export default function App() {
           </>
         ) : (
           /* History View Tab */
-          <section className="py-8">
+          <div className="py-8 space-y-8">
+            <ThreatTimelineChart
+              scans={scanLogs}
+              onSelectScan={handleSelectFromHistory}
+              selectedScanId={activeScan?.id || null}
+            />
             <ScanLogsTable
               logs={scanLogs}
               onSelectScan={handleSelectFromHistory}
               activeScanId={activeScan?.id || null}
               onClearLogs={handleClearLogs}
             />
-          </section>
+          </div>
         )}
       </main>
 
