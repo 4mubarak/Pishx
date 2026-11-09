@@ -29,8 +29,10 @@
   - 1-click node inspection syncing directly with the main verdict inspector.
   - Telemetry KPI strip tracking Peak Threat Index, Mean Risk Level, and Interception Rate.
 - **Developer Tools**:
+  - **Executive PDF Report Generator**: 1-click generation of formatted, downloadable security dossier files with cryptographic audit seals.
   - Formatted JSON response viewer with one-click copy and file download.
   - Searchable, filterable scan logs table with CSV export.
+  - Quick-access Recent Searches dropdown persisting the last 5 scanned URLs.
   - Built-in documentation & configuration modals.
   - Pre-loaded sample scenarios for instant 1-click testing (PayPal, Microsoft 365, Solana drainer, Google, GitHub).
 

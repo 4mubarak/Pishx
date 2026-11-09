@@ -16,9 +16,11 @@ import {
   ExternalLink,
   Layers,
   Sparkles,
-  Info
+  Info,
+  Loader2
 } from 'lucide-react';
 import { ScanResult, RiskIndicator, SeverityType } from '../types';
+import { generatePdfReport } from '../utils/pdfReportGenerator';
 
 interface IntelligenceMetricsProps {
   scan: ScanResult;
@@ -29,6 +31,18 @@ export const IntelligenceMetrics: React.FC<IntelligenceMetricsProps> = ({ scan }
   const [isJsonOpen, setIsJsonOpen] = useState(false);
   const [copiedJson, setCopiedJson] = useState(false);
   const [expandedIndicatorId, setExpandedIndicatorId] = useState<string | null>(null);
+  const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
+  const [pdfSuccess, setPdfSuccess] = useState(false);
+
+  const handleGeneratePdf = () => {
+    setIsGeneratingPdf(true);
+    setTimeout(() => {
+      generatePdfReport(scan);
+      setIsGeneratingPdf(false);
+      setPdfSuccess(true);
+      setTimeout(() => setPdfSuccess(false), 2500);
+    }, 600);
+  };
 
   const handleCopyJson = () => {
     navigator.clipboard.writeText(JSON.stringify(scan.rawJson, null, 2));
@@ -91,45 +105,77 @@ export const IntelligenceMetrics: React.FC<IntelligenceMetricsProps> = ({ scan }
           <p className="text-xs text-slate-400">Deep inspection metrics and neural LLM reasoning</p>
         </div>
 
-        <div className="flex items-center rounded-lg border border-slate-800 bg-slate-950 p-1">
+        <div className="flex flex-wrap items-center gap-2">
+          {/* Generate PDF Report Button */}
           <button
             type="button"
-            onClick={() => setActiveTab('indicators')}
-            className={`flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
-              activeTab === 'indicators'
-                ? 'bg-slate-800 text-emerald-400 shadow-sm'
-                : 'text-slate-400 hover:text-slate-200'
-            }`}
+            onClick={handleGeneratePdf}
+            disabled={isGeneratingPdf}
+            className={`flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-semibold transition-all shadow-sm ${
+              pdfSuccess
+                ? 'border-emerald-500/80 bg-emerald-950/80 text-emerald-300'
+                : 'border-emerald-500/40 bg-emerald-950/30 text-emerald-300 hover:border-emerald-400 hover:bg-emerald-900/50 hover:text-white'
+            } disabled:opacity-50`}
+            title="Compile current scan results into a formatted, downloadable PDF summary file"
           >
-            <Fingerprint className="h-3.5 w-3.5" />
-            <span>Risk Indicators</span>
+            {isGeneratingPdf ? (
+              <>
+                <Loader2 className="h-3.5 w-3.5 animate-spin text-emerald-400" />
+                <span>Compiling PDF...</span>
+              </>
+            ) : pdfSuccess ? (
+              <>
+                <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" />
+                <span>PDF Downloaded!</span>
+              </>
+            ) : (
+              <>
+                <FileText className="h-3.5 w-3.5 text-emerald-400" />
+                <span>Generate PDF Report</span>
+              </>
+            )}
           </button>
 
-          <button
-            type="button"
-            onClick={() => setActiveTab('dom_forensics')}
-            className={`flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
-              activeTab === 'dom_forensics'
-                ? 'bg-slate-800 text-emerald-400 shadow-sm'
-                : 'text-slate-400 hover:text-slate-200'
-            }`}
-          >
-            <Layers className="h-3.5 w-3.5" />
-            <span>DOM Forensics</span>
-          </button>
+          <div className="flex items-center rounded-lg border border-slate-800 bg-slate-950 p-1">
+            <button
+              type="button"
+              onClick={() => setActiveTab('indicators')}
+              className={`flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
+                activeTab === 'indicators'
+                  ? 'bg-slate-800 text-emerald-400 shadow-sm'
+                  : 'text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              <Fingerprint className="h-3.5 w-3.5" />
+              <span>Risk Indicators</span>
+            </button>
 
-          <button
-            type="button"
-            onClick={() => setActiveTab('raw_json')}
-            className={`flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
-              activeTab === 'raw_json'
-                ? 'bg-slate-800 text-emerald-400 shadow-sm'
-                : 'text-slate-400 hover:text-slate-200'
-            }`}
-          >
-            <Code className="h-3.5 w-3.5" />
-            <span>JSON Payload</span>
-          </button>
+            <button
+              type="button"
+              onClick={() => setActiveTab('dom_forensics')}
+              className={`flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
+                activeTab === 'dom_forensics'
+                  ? 'bg-slate-800 text-emerald-400 shadow-sm'
+                  : 'text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              <Layers className="h-3.5 w-3.5" />
+              <span>DOM Forensics</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setActiveTab('raw_json')}
+              className={`flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
+                activeTab === 'raw_json'
+                  ? 'bg-slate-800 text-emerald-400 shadow-sm'
+                  : 'text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              <Code className="h-3.5 w-3.5" />
+              <span>JSON Payload</span>
+            </button>
+          </div>
         </div>
       </div>
 
