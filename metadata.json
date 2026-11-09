@@ -1,0 +1,6 @@
+{
+  "name": "PX Phishing Intelligence",
+  "description": "Advanced LLM-powered phishing website detection system with multi-modal DOM, vision, and threat intelligence analysis.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
