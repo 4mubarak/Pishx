@@ -1,4 +1,4 @@
-# PX — LLM-Powered Phishing Website Detection System
+# Pishx — LLM-Powered Phishing Website Detection System
 
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.x-blue.svg)](https://www.typescriptlang.org/)
 [![React](https://img.shields.io/badge/React-19-61dafb.svg)](https://react.dev/)
@@ -6,7 +6,7 @@
 [![License](https://img.shields.io/badge/License-Apache%202.0-emerald.svg)](LICENSE)
 [![Security](https://img.shields.io/badge/SOC%202-Compliant%20Architecture-10B981.svg)]()
 
-> **PX (PhishX)** is an advanced, multi-modal threat intelligence system engineered to detect zero-day phishing websites, brand impersonation lures, credential harvesters, and Adversary-in-the-Middle (AiTM) reverse proxies before they appear on global blocklists.
+> **Pishx (PX)** is an advanced, multi-modal threat intelligence system engineered to detect zero-day phishing websites, brand impersonation lures, credential harvesters, and Adversary-in-the-Middle (AiTM) reverse proxies before they appear on global blocklists.
 
 ---
 
@@ -38,8 +38,8 @@
 
 ### 1. Clone the repository
 ```bash
-git clone https://github.com/your-username/px-phishing-intelligence.git
-cd px-phishing-intelligence
+git clone https://github.com/4mubarak/Pishx.git
+cd Pishx
 ```
 
 ### 2. Install dependencies
@@ -118,7 +118,7 @@ npm run build
 
 ```bash
 curl -X POST https://api.px-defense.internal/v2/analyze \
-  -H "Authorization: Bearer px_live_token" \
+  -H "Authorization: Bearer nipost_test_c4121f39a17a871433a3a04822b665e892d1e33ef42dd144" \
   -H "Content-Type: application/json" \
   -d '{
     "url": "https://paypal-security-verification.acc-recovery-928.top/login",

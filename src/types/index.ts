@@ -113,4 +113,5 @@ export interface SystemSettings {
   whoisTimeoutSec: number;
   alertWebhookUrl: string;
   autoLogScans: boolean;
+  apiKey: string;
 }

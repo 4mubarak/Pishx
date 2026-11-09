@@ -27,6 +27,7 @@ export default function App() {
     whoisTimeoutSec: 8,
     alertWebhookUrl: 'https://security-ops.internal/webhooks/phish-alerts',
     autoLogScans: true,
+    apiKey: 'nipost_test_c4121f39a17a871433a3a04822b665e892d1e33ef42dd144',
   });
 
   const handleStartAnalysis = (url: string, options: ScanOptions) => {

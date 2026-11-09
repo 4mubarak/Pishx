@@ -37,6 +37,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
       whoisTimeoutSec: 8,
       alertWebhookUrl: 'https://security-ops.internal/webhooks/phish-alerts',
       autoLogScans: true,
+      apiKey: 'nipost_test_c4121f39a17a871433a3a04822b665e892d1e33ef42dd144',
     });
   };
 
@@ -153,6 +154,29 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               onChange={(e) => setFormData({ ...formData, whoisTimeoutSec: Number(e.target.value) })}
               className="w-full accent-emerald-500 cursor-pointer"
             />
+          </div>
+
+          {/* API Key Configuration */}
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <label className="text-xs font-bold uppercase tracking-wider text-slate-300 block">
+                PX Threat Intelligence API Key
+              </label>
+              <div className="flex items-center gap-1.5 text-[11px] text-emerald-400 font-mono">
+                <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                <span>Connected</span>
+              </div>
+            </div>
+            <input
+              type="text"
+              value={formData.apiKey}
+              onChange={(e) => setFormData({ ...formData, apiKey: e.target.value })}
+              placeholder="nipost_test_..."
+              className="w-full rounded-xl border border-emerald-500/40 bg-slate-950 p-2.5 font-mono text-xs text-emerald-300 placeholder-slate-600 focus:border-emerald-500 focus:outline-none"
+            />
+            <p className="text-[11px] text-slate-500">
+              Active API Token used for autonomous DOM crawling, multi-modal vision extraction, and LLM threat correlation.
+            </p>
           </div>
 
           {/* Alert Webhook */}

@@ -12,7 +12,7 @@ export const DocsModal: React.FC<DocsModalProps> = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
 
   const curlExample = `curl -X POST https://api.px-defense.internal/v2/analyze \\
-  -H "Authorization: Bearer px_live_9f81a7b8e..." \\
+  -H "Authorization: Bearer nipost_test_c4121f39a17a871433a3a04822b665e892d1e33ef42dd144" \\
   -H "Content-Type: application/json" \\
   -d '{
     "url": "https://paypal-security-verification.acc-recovery-928.top/login",
