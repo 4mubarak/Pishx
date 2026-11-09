@@ -11,7 +11,9 @@ import {
   Download, 
   Copy, 
   Check, 
-  Filter
+  Filter,
+  FileSpreadsheet,
+  CheckCircle2
 } from 'lucide-react';
 import { ScanResult, VerdictType } from '../types';
 
@@ -31,6 +33,8 @@ export const ScanLogsTable: React.FC<ScanLogsTableProps> = ({
   const [searchTerm, setSearchTerm] = useState('');
   const [filterVerdict, setFilterVerdict] = useState<string>('ALL');
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [isExportingCsv, setIsExportingCsv] = useState(false);
+  const [csvExportSuccess, setCsvExportSuccess] = useState(false);
 
   const filteredLogs = logs.filter((log) => {
     const matchesSearch =
@@ -51,23 +55,71 @@ export const ScanLogsTable: React.FC<ScanLogsTableProps> = ({
   };
 
   const handleExportCsv = () => {
-    const headers = ['Scan ID', 'Timestamp', 'Target URL', 'Verdict', 'Confidence', 'Impersonated Brand'];
-    const rows = logs.map((l) => [
-      l.id,
-      `"${l.timestamp}"`,
-      `"${l.url}"`,
-      l.verdict,
+    if (logs.length === 0) return;
+    setIsExportingCsv(true);
+
+    const targetList = filteredLogs.length > 0 ? filteredLogs : logs;
+    const headers = [
+      'Scan ID',
+      'Timestamp (UTC)',
+      'Target URL',
+      'Classification Verdict',
+      'Confidence Score (%)',
+      'Impersonated Brand',
+      'Target Sector',
+      'Domain Age (Days)',
+      'TLS / SSL Valid',
+      'SSL Issuer',
+      'Hosting IP',
+      'Country',
+      'ASN',
+      'External Form Action Target',
+      'Critical Indicators Count',
+      'Threat Rationale Summary',
+    ];
+
+    const escapeCsv = (str: string | undefined | null) => {
+      if (!str) return '""';
+      return `"${str.replace(/"/g, '""')}"`;
+    };
+
+    const rows = targetList.map((l) => [
+      escapeCsv(l.id),
+      escapeCsv(l.timestamp),
+      escapeCsv(l.url),
+      escapeCsv(l.verdict),
       `${l.confidenceScore}%`,
-      `"${l.impersonatedBrand?.name || 'N/A'}"`,
+      escapeCsv(l.impersonatedBrand?.name || 'N/A'),
+      escapeCsv(l.impersonatedBrand?.targetSector || 'N/A'),
+      l.metrics.domainAgeDays,
+      l.metrics.sslValid ? 'YES' : 'NO',
+      escapeCsv(l.metrics.sslIssuer),
+      escapeCsv(l.metrics.ipAddress),
+      escapeCsv(l.metrics.country),
+      escapeCsv(l.metrics.asn),
+      escapeCsv(l.domData.formActionTarget || 'None'),
+      l.indicators.length,
+      escapeCsv(l.rationale.summary),
     ]);
-    const csvContent = 'data:text/csv;charset=utf-8,' + [headers.join(','), ...rows.map((r) => r.join(','))].join('\n');
+
+    const csvContent =
+      'data:text/csv;charset=utf-8,\uFEFF' +
+      [headers.join(','), ...rows.map((r) => r.join(','))].join('\r\n');
+
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement('a');
     link.setAttribute('href', encodedUri);
-    link.setAttribute('download', `px-phishing-scan-logs-${new Date().toISOString().slice(0, 10)}.csv`);
+    link.setAttribute(
+      'download',
+      `px-phishing-threat-report-${new Date().toISOString().slice(0, 10)}.csv`
+    );
     document.body.appendChild(link);
     link.click();
     link.remove();
+
+    setIsExportingCsv(false);
+    setCsvExportSuccess(true);
+    setTimeout(() => setCsvExportSuccess(false), 2500);
   };
 
   const renderBadge = (verdict: VerdictType) => {
@@ -145,16 +197,29 @@ export const ScanLogsTable: React.FC<ScanLogsTableProps> = ({
             ))}
           </div>
 
-          {/* Export CSV */}
+          {/* Export CSV Report Button */}
           <button
             type="button"
             onClick={handleExportCsv}
-            disabled={logs.length === 0}
-            className="flex items-center gap-1.5 rounded-lg border border-slate-800 bg-slate-950 px-2.5 py-1.5 text-xs font-medium text-slate-300 hover:bg-slate-800 hover:text-white transition-colors disabled:opacity-50"
-            title="Export CSV"
+            disabled={logs.length === 0 || isExportingCsv}
+            className={`flex items-center gap-2 rounded-lg border px-3 py-1.5 text-xs font-semibold transition-all shadow-sm ${
+              csvExportSuccess
+                ? 'border-emerald-500/80 bg-emerald-950/80 text-emerald-300'
+                : 'border-slate-700 bg-slate-900 text-slate-100 hover:border-emerald-500/50 hover:bg-slate-800 hover:text-white'
+            } disabled:opacity-40 disabled:cursor-not-allowed`}
+            title="Export complete scan telemetry to CSV"
           >
-            <Download className="h-3.5 w-3.5" />
-            <span className="hidden sm:inline">CSV</span>
+            {csvExportSuccess ? (
+              <>
+                <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" />
+                <span>Exported CSV!</span>
+              </>
+            ) : (
+              <>
+                <FileSpreadsheet className="h-3.5 w-3.5 text-emerald-400" />
+                <span>Export CSV Report</span>
+              </>
+            )}
           </button>
 
           {/* Clear Logs */}
@@ -280,9 +345,17 @@ export const ScanLogsTable: React.FC<ScanLogsTableProps> = ({
       </div>
 
       {/* Table Footer info */}
-      <div className="flex items-center justify-between border-t border-slate-800 p-4 text-[11px] text-slate-400 font-mono">
-        <span>Showing {filteredLogs.length} of {logs.length} scan records</span>
-        <span>Auto-logging enabled</span>
+      <div className="flex flex-wrap items-center justify-between gap-3 border-t border-slate-800 p-4 text-[11px] text-slate-400 font-mono">
+        <span>Showing {filteredLogs.length} of {logs.length} scan records · Auto-logging enabled</span>
+        <button
+          type="button"
+          onClick={handleExportCsv}
+          disabled={logs.length === 0 || isExportingCsv}
+          className="flex items-center gap-1.5 text-slate-400 hover:text-emerald-400 transition-colors disabled:opacity-40"
+        >
+          <Download className="h-3.5 w-3.5" />
+          <span>Download History (.csv)</span>
+        </button>
       </div>
     </div>
   );
